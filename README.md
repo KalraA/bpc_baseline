@@ -15,7 +15,6 @@ yolo/
   models/          # YOLO trained weights (.pt)
 
 pose/
-  train.py         # Train the SimplePoseNet on BOP data
   checkpoints/     # Stores pose model checkpoints
   models/          # Network definitions, losses, etc.
   trainers/        # Training logic for pose estimation
@@ -47,7 +46,6 @@ docker run -p 8888:8888 --shm-size=1g --runtime nvidia --gpus all -v $(pwd):/cod
 cd /code
 ```
 
-
 ### Download Data
 ```bash
 bash download_data.sh
@@ -60,8 +58,8 @@ Convert BOP data to YOLO format:
 ```bash
 python3 bpc/yolo/prepare_data.py \
     --dataset_path "datasets/train_pbr" \
-    --output_path "datasets/yolo11/train_obj_11" \
-    --obj_id 11
+    --output_path "datasets/yolo11/train_obj_8" \
+    --obj_id 8
 ```
 
 ### Train YOLO Model
@@ -79,13 +77,15 @@ python3 bpc/yolo/train.py \
 ```bash
 python3 train_pose.py \
   --root_dir datasets/ \
-  --target_obj_id 11 \
-  --epochs 5 \
+  --target_obj_id 8 \
+  --epochs 50 \
   --batch_size 32 \
-  --lr 1e-3 \
+  --lr 5e-4 \
   --num_workers 16 \
-  --checkpoints_dir yolo_ckpts/
+  --checkpoints_dir bpc/pose/pose_checkpoints/ \
+  --loss_type quathi
 ```
+
 ### Download Pretrained Models
 ```bash
 wget https://storage.googleapis.com/akasha-public/IPBC/baseline_solution/v1/models.zip
@@ -96,10 +96,9 @@ rm models.zip
 ### Run Inference
 ```bash
 jupyter notebook --ip=0.0.0.0 --allow-root --port=8888
-# Go to localhost:8888 on your browswer
+# Go to localhost:8888 on your browser
 # Run "Inference Notebook.ipynb"
 ```
-
 
 ### Notes
 - Ensure CUDA 12.1 drivers are installed and PyTorch recognizes the GPU (`nvidia-smi`).
@@ -110,3 +109,4 @@ jupyter notebook --ip=0.0.0.0 --allow-root --port=8888
   python -m idp_codebase.pose.train ...
   ```
   or add `__init__.py` files where necessary.
+

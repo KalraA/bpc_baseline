@@ -56,7 +56,7 @@ def train_yolo11(task, data_path, obj_id, epochs, imgsz, batch):
         imgsz=imgsz,
         batch=batch,
         device=device,
-        workers=2,
+        workers=8,  # more workers, train faster, adjust based on device
         save=True,  # This creates a 'runs/train/...' folder but we'll still save final .pt ourselves
     )
 
